@@ -419,7 +419,7 @@ footer .mono{font-size:12px;color:var(--dim-2);letter-spacing:.06em}
       <span class="section-idx">02</span>
       <h2 class="section-title">Flagship projects</h2>
     </div>
-    <p class="section-lede reveal" id="flagship-lede">Four end-to-end builds that carry the through-line: honest modeling against a real baseline, shipped as deployed, tested services. Production MLOps, causal targeting, adversarial detection, and grounded retrieval.</p>
+    <p class="section-lede reveal" id="flagship-lede">Five end-to-end builds, led by the ones that prove the most: honest modeling against a real baseline, backtested decisions, and shipped, tested services. Decision modeling, production MLOps, adversarial detection, causal targeting, and grounded retrieval.</p>
 
     <!-- Flagship cards render here from the FLAGSHIP_PROJECTS array in the script at the bottom of this file. -->
     <div id="flagship-list"></div>
@@ -563,7 +563,7 @@ footer .mono{font-size:12px;color:var(--dim-2);letter-spacing:.06em}
             <span class="ic">◐</span>
             <span class="txt"><span class="lbl">GitHub</span><span class="val">github.com/alexbiuckians</span></span>
           </a>
-          <a class="crow" href="https://linkedin.com/in/alex-biuckians" target="_blank" rel="noopener">
+          <a class="crow" href="https://www.linkedin.com/in/alex-biuckians/" target="_blank" rel="noopener">
             <span class="ic">in</span>
             <span class="txt"><span class="lbl">LinkedIn</span><span class="val">linkedin.com/in/alex-biuckians</span></span>
           </a>
@@ -627,6 +627,26 @@ footer .mono{font-size:12px;color:var(--dim-2);letter-spacing:.06em}
 
 const FLAGSHIP_PROJECTS = [
   {
+    category: "FORECASTING / DECISION MODELING",
+    title: "Parquet Capital",
+    tagline: "A front-office valuation engine that prices NBA contracts as financial assets — forecasting performance with calibrated uncertainty, then backtesting the verdicts on held-out seasons.",
+    links: [
+      { label: "live demo ↗", href: "https://parquet-capital.streamlit.app/" },
+      { label: "code ↗", href: "https://github.com/alexbiuckians" }
+    ],
+    narrative: [
+      "The spine is one idea: treat human capital as a priced asset, then aggressively test whether the price holds up. A gradient-boosted quantile model forecasts each player's Box Plus-Minus three seasons out at the 10th/50th/90th percentile, with bands calibrated to ~80% empirical coverage measured against a real roll-forward — not the assumed √h shortcut.",
+      "The headline isn't an error metric, it's a decision-level backtest: trained only on prior seasons, the engine's Overvalued flags are shown to cost ~8.6× more per delivered value point on held-out outcomes it never saw at flag time. The signal is stress-tested twice more — re-run on an independent target (VORP) and an independent model class (a parameter-free aging curve), reported with Cohen's κ — and restated as dollars of avoidable overpay.",
+      "It abstains where the data can't support a verdict: elite max-tier deals are ceiling-capped rather than auto-flagged, and sub-replacement players are priced on a separate salary-floor track. Honest negatives are stated plainly — hyperparameter tuning beat the defaults by ~0.01 BPM, within fold noise, and the code says so rather than dressing it up."
+    ],
+    metrics: [
+      { value: "8.6×", caption: "more cost per delivered value point on Overvalued-flagged contracts vs Undervalued — on held-out seasons the model never saw at flag time" },
+      { value: "~80%", caption: "empirical coverage of the 10–90 uncertainty bands, calibrated against a real roll-forward at every horizon" },
+      { value: "4,860", amber: true, caption: "real player-seasons (2017–2025) joined from public sources; 45 tests on the correctness-critical paths" }
+    ],
+    stack: ["scikit-learn","quantile GBM","expanding-window CV","PuLP (LP optimizer)","Streamlit · Altair","pandas · numpy","pytest (45)"]
+  },
+  {
     category: "TIME-SERIES / MLOPS",
     title: "GridCast",
     tagline: "An hourly electricity-load forecaster, shipped like production software — CI, experiment tracking, containerized serving, and no train/serve skew.",
@@ -642,6 +662,27 @@ const FLAGSHIP_PROJECTS = [
       { value: "CI ✓", amber: true, caption: "GitHub Actions runs lint, unit tests & an end-to-end train→serve smoke test on every push" }
     ],
     stack: ["LightGBM","FastAPI","MLflow","Docker","GitHub Actions","pytest · ruff","time-series CV","leakage-safe features"]
+  },
+  {
+    category: "ADVERSARIAL DETECTION",
+    title: "HouseEdge",
+    tagline: "Game-integrity detection under adversarial pressure — how few rounds before the house can flag an edge at 95% confidence.",
+    links: [
+      { label: "live demo ↗", href: "https://houseedge.onrender.com/" },
+      { label: "code ↗", href: "https://github.com/alexbiuckians" }
+    ],
+    headline: true,
+    narrative: [
+      "A card counter pressing a +0.63% edge is flagged nearly 100% of the time in a median 83 hands. To drop detection below 5%, the counter must dampen its bet spread so far its edge goes negative — staying hidden and keeping an edge are mutually exclusive. False-positive rate on ordinary gamblers: 0.4%.",
+      "Unlike a model fit to a cooperative dataset, here the subject fights back — a counter adds cover plays, a rigged wheel drifts slowly under audit thresholds. The core metric is detection latency under adaptation, not accuracy on a static sample: sequential hypothesis testing (SPRT, CUSUM) plus anomaly detection against an opponent who evades.",
+      "The deliverable isn't \u201CI beat the casino.\u201D It's a quantified detectability frontier — the exact trade a cheater must make between the edge they gain and the rounds they survive. And I expose the detector's own blind spot honestly: a Wong back-counter who sits out cold shoes evades detection entirely while sustaining a +1% edge."
+    ],
+    metrics: [
+      { value: "83", caption: "median hands to flag a +0.63% counter at 95%+ confidence" },
+      { value: "0.4%", caption: "false-accusation rate on ordinary gamblers — a controllable α, realized at 0.010 / 0.042 / 0.077 vs targets" },
+      { value: "0.94–1.00", amber: true, caption: "average precision for advantage-play detection (unsupervised → supervised) over a ~120-hand session" }
+    ],
+    stack: ["NumPy","SciPy","Wald SPRT","CUSUM","IsolationForest","GradientBoosting","Dash + Plotly","Monte Carlo","pytest (13)"]
   },
   {
     category: "CAUSAL / UPLIFT",
@@ -662,24 +703,6 @@ const FLAGSHIP_PROJECTS = [
       { value: "51,047", amber: true, caption: "Cell2Cell customer rows, 58 features, 28.8% churn — tuned on Recall / F2 / AUC, not misleading accuracy" }
     ],
     stack: ["FastAPI","Pydantic","causalml","econml","S-/T-learner","Causal Forest","LightGBM","SMOTE + Optuna","Docker","Render"]
-  },
-  {
-    category: "ADVERSARIAL DETECTION",
-    title: "HouseEdge",
-    tagline: "Game-integrity detection under adversarial pressure — how few rounds before the house can flag an edge at 95% confidence.",
-    links: [ { label: "code ↗", href: "https://github.com/alexbiuckians" } ],
-    headline: true,
-    narrative: [
-      "A card counter pressing a +0.63% edge is flagged nearly 100% of the time in a median 83 hands. To drop detection below 5%, the counter must dampen its bet spread so far its edge goes negative — staying hidden and keeping an edge are mutually exclusive. False-positive rate on ordinary gamblers: 0.4%.",
-      "Unlike a model fit to a cooperative dataset, here the subject fights back — a counter adds cover plays, a rigged wheel drifts slowly under audit thresholds. The core metric is detection latency under adaptation, not accuracy on a static sample: sequential hypothesis testing (SPRT, CUSUM) plus anomaly detection against an opponent who evades.",
-      "The deliverable isn't \u201CI beat the casino.\u201D It's a quantified detectability frontier — the exact trade a cheater must make between the edge they gain and the rounds they survive. And I expose the detector's own blind spot honestly: a Wong back-counter who sits out cold shoes evades detection entirely while sustaining a +1% edge."
-    ],
-    metrics: [
-      { value: "83", caption: "median hands to flag a +0.63% counter at 95%+ confidence" },
-      { value: "0.4%", caption: "false-accusation rate on ordinary gamblers — a controllable α, realized at 0.010 / 0.042 / 0.077 vs targets" },
-      { value: "0.94–1.00", amber: true, caption: "average precision for advantage-play detection (unsupervised → supervised) over a ~120-hand session" }
-    ],
-    stack: ["NumPy","SciPy","Wald SPRT","CUSUM","IsolationForest","GradientBoosting","Dash + Plotly","Monte Carlo","pytest (13)"]
   },
   {
     category: "RAG / NLP / LLM",
@@ -712,13 +735,6 @@ const MORE_PROJECTS = [
     sub: "Explainable fraud-risk prioritization",
     body: "Tiers healthcare claims into a prioritized auditor worklist and pairs every flag with SHAP attributions in an interactive dashboard — leakage-safe evaluation, test-calibrated thresholds.",
     stat: "Top-tier fraud precision <b>72% → 80%</b> via SHAP-guided feature pruning of an Isolation Forest"
-  },
-  {
-    year: "2026 · SPORTS",
-    title: "Parquet Capital",
-    sub: "NBA contract valuation & forecasting",
-    body: "Forecasts player performance trajectories with quantile uncertainty bands and classifies contracts as over-, under-, or fairly valued using expanding-window time-series CV.",
-    stat: "Prediction intervals calibrated to <b>~80% coverage</b>, stress-tested on held-out dollar impact"
   },
   {
     year: "2026 · HEALTHCARE",

@@ -419,7 +419,7 @@ footer .mono{font-size:12px;color:var(--dim-2);letter-spacing:.06em}
       <span class="section-idx">02</span>
       <h2 class="section-title">Flagship projects</h2>
     </div>
-    <p class="section-lede reveal" id="flagship-lede">Five end-to-end builds, led by the ones that prove the most: honest modeling against a real baseline, backtested decisions, and shipped, tested services. Decision modeling, production MLOps, adversarial detection, streaming data engineering, and causal targeting.</p>
+    <p class="section-lede reveal" id="flagship-lede">Three end-to-end builds on real, messy data — a spatial model whose residuals recover a finding it was never told about, an operations system that goes from forecast to optimization to simulation, and the production monitoring that catches what drift detectors miss.</p>
  
     <!-- Flagship cards render here from the FLAGSHIP_PROJECTS array in the script at the bottom of this file. -->
     <div id="flagship-list"></div>
@@ -627,128 +627,147 @@ footer .mono{font-size:12px;color:var(--dim-2);letter-spacing:.06em}
  
 const FLAGSHIP_PROJECTS = [
   {
-    category: "FORECASTING / DECISION MODELING",
-    title: "Parquet Capital",
-    tagline: "A front-office valuation engine that prices NBA contracts as financial assets — forecasting performance with calibrated uncertainty, then backtesting the verdicts on held-out seasons.",
+    category: "SPATIAL / EXPLAINABLE ML (R)",
+    title: "TurnoutLens",
+    tagline: "A model that knows only demographics recovers the effect of election law from its own residuals \u2014 without ever being told election law exists.",
     links: [
-      { label: "live demo ↗", href: "https://parquet-capital.streamlit.app/" },
-      { label: "code ↗", href: "https://github.com/alexbiuckians" }
-    ],
-    narrative: [
-      "The spine is one idea: treat human capital as a priced asset, then aggressively test whether the price holds up. A gradient-boosted quantile model forecasts each player's Box Plus-Minus three seasons out at the 10th/50th/90th percentile, with bands calibrated to ~80% empirical coverage measured against a real roll-forward — not the assumed √h shortcut.",
-      "The headline isn't an error metric, it's a decision-level backtest: trained only on prior seasons, the engine's Overvalued flags are shown to cost ~8.6× more per delivered value point on held-out outcomes it never saw at flag time. The signal is stress-tested twice more — re-run on an independent target (VORP) and an independent model class (a parameter-free aging curve), reported with Cohen's κ — and restated as dollars of avoidable overpay.",
-      "It abstains where the data can't support a verdict: elite max-tier deals are ceiling-capped rather than auto-flagged, and sub-replacement players are priced on a separate salary-floor track. Honest negatives are stated plainly — hyperparameter tuning beat the defaults by ~0.01 BPM, within fold noise, and the code says so rather than dressing it up."
-    ],
-    metrics: [
-      { value: "8.6×", caption: "more cost per delivered value point on Overvalued-flagged contracts vs Undervalued — on held-out seasons the model never saw at flag time" },
-      { value: "~80%", caption: "empirical coverage of the 10–90 uncertainty bands, calibrated against a real roll-forward at every horizon" },
-      { value: "4,860", amber: true, caption: "real player-seasons (2017–2025) joined from public sources; 45 tests on the correctness-critical paths" }
-    ],
-    stack: ["scikit-learn","quantile GBM","expanding-window CV","PuLP (LP optimizer)","Streamlit · Altair","pandas · numpy","pytest (45)"]
-  },
-  {
-    category: "TIME-SERIES / MLOPS",
-    title: "GridCast",
-    tagline: "An hourly electricity-load forecaster, shipped like production software — CI, experiment tracking, containerized serving, and no train/serve skew.",
-    links: [ { label: "code ↗", href: "https://github.com/alexbiuckians" } ],
-    narrative: [
-      "Forecasting the grid's hourly load is only half the problem; the other half is shipping a model that behaves the same in serving as it did in training. GridCast does both — a LightGBM forecaster with expanding-window time-series cross-validation and leakage-safe lag and rolling features, cutting MAE 72% over a seasonal-naive baseline.",
-      "The serving layer engineers features server-side from raw load history, so the API can't drift from the training pipeline. It ships with MLflow experiment tracking, a Docker image, and a GitHub Actions CI pipeline that runs lint, unit tests, and end-to-end training-and-serving smoke tests on every push.",
-      "The point isn't just the accuracy number — it's that the whole thing is reproducible, tested, and deployable, the way a real forecasting service has to be."
-    ],
-    metrics: [
-      { value: "−72%", caption: "MAE cut vs a seasonal-naive baseline — 2.67% vs 9.54% MAPE" },
-      { value: "18,169", caption: "held-out hours evaluated with expanding-window time-series CV" },
-      { value: "CI ✓", amber: true, caption: "GitHub Actions runs lint, unit tests & an end-to-end train→serve smoke test on every push" }
-    ],
-    stack: ["LightGBM","FastAPI","MLflow","Docker","GitHub Actions","pytest · ruff","time-series CV","leakage-safe features"]
-  },
-  {
-    category: "ADVERSARIAL DETECTION",
-    title: "HouseEdge",
-    tagline: "Game-integrity detection under adversarial pressure — how few rounds before the house can flag an edge at 95% confidence.",
-    links: [
-      { label: "live demo ↗", href: "https://houseedge.onrender.com/" },
-      { label: "code ↗", href: "https://github.com/alexbiuckians" }
+      { label: "live app \u2197", href: "https://alexbiuckians.shinyapps.io/turnoutlens/" },
+      { label: "code \u2197", href: "https://github.com/alexbiuckians/TurnoutLens" }
     ],
     headline: true,
     narrative: [
-      "A card counter pressing a +0.63% edge is flagged nearly 100% of the time in a median 83 hands. To drop detection below 5%, the counter must dampen its bet spread so far its edge goes negative — staying hidden and keeping an edge are mutually exclusive. False-positive rate on ordinary gamblers: 0.4%.",
-      "Unlike a model fit to a cooperative dataset, here the subject fights back — a counter adds cover plays, a rigged wheel drifts slowly under audit thresholds. The core metric is detection latency under adaptation, not accuracy on a static sample: sequential hypothesis testing (SPRT, CUSUM) plus anomaly detection against an opponent who evades.",
-      "The deliverable isn't \u201CI beat the casino.\u201D It's a quantified detectability frontier — the exact trade a cheater must make between the edge they gain and the rounds they survive. And I expose the detector's own blind spot honestly: a Wong back-counter who sits out cold shoes evades detection entirely while sustaining a +1% edge."
+      "Demographics alone \u2014 age structure, education, income, unemployment, density \u2014 explain 61% of out-of-sample variance in U.S. county turnout, trained on 2000\u20132020 and tested on a 2024 the model never saw. What it can't explain is the interesting part: each county's turnout gap clusters geographically at Moran's I = 0.391, p = 2.2e-290. Adjusting for demographics removes only 0.05 of the spatial clustering.",
+      "Those residuals name the states. LISA clusters put Minnesota, Michigan, Wisconsin, Iowa and Colorado on the over-performing side and Texas, Arkansas, West Virginia and Oklahoma on the under-performing side \u2014 the canonical same-day-registration states against the most restrictive ones, recovered from demographics and geography alone.",
+      "The central design choice was to give up accuracy on purpose. Adding prior turnout makes the model 19.5% more accurate and far less useful \u2014 its answer becomes \u201Ccounties vote like they voted,\u201D and permutation importance shows the lag doing nearly all the work while education moves it by 0.0001. Dropping it costs 20% accuracy and buys a model whose residuals are the finding."
     ],
     metrics: [
-      { value: "83", caption: "median hands to flag a +0.63% counter at 95%+ confidence" },
-      { value: "0.4%", caption: "false-accusation rate on ordinary gamblers — a controllable α, realized at 0.010 / 0.042 / 0.077 vs targets" },
-      { value: "0.94–1.00", amber: true, caption: "average precision for advantage-play detection (unsupervised → supervised) over a ~120-hand session" }
+      { value: "0.391", caption: "Moran's I on the demographic residual (p = 2.2e-290) \u2014 nearly all geographic structure in turnout survives adjusting for demographics" },
+      { value: "61%", caption: "out-of-sample variance explained by demographics alone, trained 2000\u20132020 and tested on an unseen 2024" },
+      { value: "21,789", amber: true, caption: "county-cycle observations across 7 presidential elections, built from real MIT Election Lab returns and U.S. Census data" }
     ],
-    stack: ["NumPy","SciPy","Wald SPRT","CUSUM","IsolationForest","GradientBoosting","Dash + Plotly","Monte Carlo","pytest (13)"]
+    stack: ["R \u00b7 tidymodels","PostgreSQL 17","ranger \u00b7 LightGBM","DALEX","spdep (Moran's I, LISA)","sf \u00b7 Leaflet","Shiny"]
   },
   {
-    category: "STREAMING / DATA ENGINEERING",
-    title: "MacroQuant",
-    tagline: "A real-time cross-asset intelligence pipeline: ingest tick data across five asset classes, resample to OHLCV on the fly, and surface live correlation, volatility, and price-corridor forecasts in a self-refreshing dashboard.",
-    links: [ { label: "code ↗", href: "https://github.com/alexbiuckians" } ],
-    narrative: [
-      "Financial reporting is retrospective, but in a volatile session a move in 10-year yields or a crude spike ripples through tech within minutes. MacroQuant is the live view: a streaming pipeline that ingests twelve instruments plus four macro reference series, resamples ticks into 1/5/15-minute bars on the fly, and computes a rolling cross-asset correlation matrix with spike detection — all reading from one SQLite source of truth.",
-      "The design decision that carries it is a two-lane ingestion architecture. Alpaca's free feed streams tradable ETFs and crypto but not the actual VIX, the 10-year yield, or EUR/USD spot — so rather than fake them, a separate reference lane polls the official sources (CBOE, FRED, an FX endpoint) on a slow cadence, and falls back to a live ETF proxy tagged is_live_proxy=1 so every substitution is explicit and auditable.",
-      "On top sit two complementary forecasts merged into one overlay: a GARCH(1,1) volatility band widened in a stress VIX regime, and a 2-layer LSTM predicting the next bar's high/low as a scale-free corridor. A rolling harness logs coverage and MAE to a live leaderboard, and the whole thing degrades gracefully into replay mode when the market is closed, so the dashboard is never blank."
-    ],
-    metrics: [
-      { value: "5", caption: "asset classes streamed — equities, fixed income, commodities, FX, crypto — plus 4 macro reference series" },
-      { value: "2-lane", caption: "ingestion design: a live stream lane plus a reference lane with explicit, auditable proxy fallback" },
-      { value: "live", amber: true, caption: "auto-refreshing Dash pipeline with graceful degradation to replay mode; deployable to Render" }
-    ],
-    stack: ["Alpaca WebSocket","SQLite","pandas · numpy","arch (GARCH)","PyTorch LSTM","Plotly Dash","FRED · CBOE","Render"]
-  },
-  {
-    category: "CAUSAL / UPLIFT",
-    title: "UpliftIQ",
-    tagline: "I stopped predicting churn and started predicting who a retention offer can actually save.",
+    category: "OPERATIONS RESEARCH / FORECASTING",
+    title: "RouteCast",
+    tagline: "Last-mile dispatch intelligence on real industrial data \u2014 calibrated ETA prediction, provably-optimal assignment, and peak-hour staffing simulation.",
     links: [
-      { label: "live API ↗", href: "https://upliftiq.onrender.com/docs" },
-      { label: "code ↗", href: "https://github.com/alexbiuckians" }
+      { label: "live dashboard \u2197", href: "https://alexbiuckians.github.io/RouteCast/dashboard/" },
+      { label: "code \u2197", href: "https://github.com/alexbiuckians/RouteCast" }
     ],
     narrative: [
-      "A churn score tells you who will leave. It doesn't tell you whose mind a retention offer can flip. The highest-risk customers are often lost causes who churn regardless — the ROI sits with the persuadables.",
-      "UpliftIQ estimates the Conditional Average Treatment Effect of a retention contact per customer and routes budget only to the people it can move — served through a deployed FastAPI endpoint with an interactive persuadability-quadrant dashboard.",
-      "The treatment here wasn't randomized: the retention team preferentially contacted high-risk customers, so a propensity model separates treated from control at AUC ≈ 0.97. I disclose that confounding openly and refuse to report the naive treated-vs-control gap as causal — an honest positive Qini from one well-chosen learner beats a suspiciously large effect."
+      "Built on Alibaba Cainiao's LaDe dataset \u2014 445,295 real parcel deliveries across three Chinese cities, cleaned from 472,419 with a documented audit. Delivery times span P10 = 29 min to P90 = 229 min, a spread wide enough that a single point estimate is the wrong answer, so three LightGBM quantile models predict P10/P50/P90 instead.",
+      "The calibration holds: the P90 band covers 88.9% of actual deliveries against a 90% target, P10 covers 10.8% against 10%. It's leakage-free by construction \u2014 courier- and zone-level history is computed on the training split only, then mapped onto test, which is what makes the 44.7-minute median error trustworthy rather than inflated.",
+      "The predictions then feed a cost matrix for Hungarian assignment against a greedy baseline, and a SimPy discrete-event simulation of the busiest peak hour. The operational finding: the optimizer's edge grows with dispatch radius (1.2% \u2192 3.4%), but staffing the hotspot at ~10 couriers cuts average order time from 87 to 55 minutes. Staffing, not assignment, is the larger lever \u2014 and the analysis says so."
     ],
     metrics: [
-      { value: "+4.29", caption: "Qini coefficient (S-learner) — the only model to meaningfully beat random targeting on confounded observational data" },
-      { value: "1,499", caption: "\u201CPersuadables\u201D isolated from Sure Things, Lost Causes & Sleeping Dogs — the only segment that gets budget" },
-      { value: "51,047", amber: true, caption: "Cell2Cell customer rows, 58 features, 28.8% churn — tuned on Recall / F2 / AUC, not misleading accuracy" }
+      { value: "88.9%", caption: "P90 quantile coverage against a 90% target \u2014 calibrated uncertainty, not a single point estimate" },
+      { value: "\u221237%", caption: "average order time at the efficient staffing level (87 \u2192 55 min), located automatically at the curve's elbow" },
+      { value: "445,295", amber: true, caption: "real industrial deliveries (Cainiao LaDe), 94.3% retention after a documented cleaning audit" }
     ],
-    stack: ["FastAPI","Pydantic","causalml","econml","S-/T-learner","Causal Forest","LightGBM","SMOTE + Optuna","Docker","Render"]
+    stack: ["LightGBM","quantile regression","SciPy (Hungarian)","SimPy","pandas","geospatial binning"]
+  },
+  {
+    category: "MLOPS / PRODUCTION MONITORING",
+    title: "DriftWatch",
+    tagline: "Production monitoring for a deployed credit-default model \u2014 the half of the ML lifecycle that starts after the model ships.",
+    links: [
+      { label: "live app \u2197", href: "https://driftmonitor.streamlit.app/" },
+      { label: "code \u2197", href: "https://github.com/alexbiuckians/DriftWatch" }
+    ],
+    headline: true,
+    narrative: [
+      "Under a concept-drift scenario \u2014 a regime change like a recession or a relief program \u2014 the model's F2 falls from a 0.640 baseline to 0.565 and recall collapses from 0.88 to 0.62, while data drift stays at just 4%. The inputs look normal; the relationship between borrower and default has inverted, and the model is silently missing roughly 4 in 10 of the defaults it used to catch. A monitor watching only data drift would report \u201Call clear.\u201D",
+      "That's the point. Two things go wrong after deployment, on two different clocks: data drift you see immediately on every prediction; performance decay you only see once labels arrive, which for loan defaults is a billing cycle later. DriftWatch keeps them separate because they mean different things and demand different responses \u2014 watch versus retrain.",
+      "The subject model is real: gradient-boosted on the UCI credit-default dataset, 30,000 cardholders, honest held-out AUC \u2248 0.78 and judged on F2 because a missed default costs more than a false flag. Around it sit KS/PSI drift statistics, latency at p50/p95/p99, alerting with hysteresis and auto-recovery, a runbook, and 15 tests."
+    ],
+    metrics: [
+      { value: "4%", caption: "data drift while F2 falls 0.640 \u2192 0.565 and recall collapses 0.88 \u2192 0.62 \u2014 the failure mode pure drift monitoring never catches" },
+      { value: "0.78", caption: "held-out AUC on the real UCI dataset \u2014 realistic for a genuinely hard problem, not inflated from synthetic data" },
+      { value: "3 signals", amber: true, caption: "drift, decay and latency monitored separately, with hysteresis so a breach must persist before firing" }
+    ],
+    stack: ["scikit-learn","Evidently","KS \u00b7 PSI","FastAPI","Streamlit \u00b7 Plotly","SQLite","GitHub Actions","pytest (15)"]
   }
 ];
  
-/* Field guide (more projects):
-     year – small label, e.g. "2026 · HEALTHCARE"
-     title, sub – name and one-line subtitle
-     body – one short paragraph
-     stat – the bottom highlight line; wrap the number in <b>...</b> to make it teal */
+/* Field guide (more projects): year / title / sub / body / stat */
 const MORE_PROJECTS = [
+  {
+    year: "2026 · DECISION MODELING",
+    title: "Parquet Capital",
+    sub: "NBA contract valuation &amp; risk",
+    body: "Forecasts player performance with calibrated uncertainty bands, prices contracts against market comps, and optimizes the cap with linear programming — then backtests the verdicts on held-out seasons.",
+    stat: "Overvalued flags cost <b>8.6×</b> more per delivered value point on seasons the model never saw"
+  },
+  {
+    year: "2026 · NLP / EVALUATION",
+    title: "SignalText",
+    sub: "Where two sentiment models disagree",
+    body: "A fine-tuned transformer and a zero-shot LLM score the same 250k Amazon reviews; the pipeline ranks their disagreements by joint confidence and flags them for human review.",
+    stat: "Zero-shot beats fine-tuned <b>95.6% vs 90.4%</b> — and the weaker model is the more confident one"
+  },
+  {
+    year: "2026 · GEOSPATIAL",
+    title: "TransitAccess",
+    sub: "Transit equity, and the graph you drew",
+    body: "A multimodal DC accessibility model over raw GTFS, then a specification ladder showing how much of the headline equity conclusion is really a modeling assumption.",
+    stat: "Same data, same code: Q4/Q1 access ratio ranges <b>1.1 to 24.8</b> depending on unstated choices"
+  },
+{
+    year: "2026 · STREAMING",
+    title: "StreamGuard",
+    sub: "Real-time anomaly &amp; drift detection",
+    body: "An event-driven pipeline scoring a high-velocity sensor stream for point anomalies and distribution drift, with leakage-safe scoring, late-event handling and a live console.",
+    stat: "The anomaly detector flags <b>0 of 1,782</b> drift events — a designed blind spot, which is why ADWIN runs alongside it"
+  },
+  {
+    year: "2026 · ADVERSARIAL",
+    title: "HouseEdge",
+    sub: "Game-integrity &amp; advantage-play detection",
+    body: "Simulates fair and subtly-rigged casino games, then detects both rigging and advantage play under adversarial adaptation using sequential hypothesis testing and anomaly detection.",
+    stat: "Flags a card counter in a median <b>83 hands</b> at a 0.4% false-positive rate — and quantifies its own blind spot"
+  },
+  {
+    year: "2026 · TIME-SERIES / MLOPS",
+    title: "GridCast",
+    sub: "Hourly electricity load forecasting",
+    body: "A LightGBM forecaster with expanding-window CV and leakage-safe features, served by a FastAPI API that engineers features server-side so training and serving share one code path.",
+    stat: "Cuts MAE <b>72%</b> over a seasonal-naive baseline (2.67% vs 9.54% MAPE) on 18,169 held-out hours"
+  },
+  {
+    year: "2026 · EXPERIMENTATION",
+    title: "ExperimentLab",
+    sub: "A/B testing &amp; causal inference",
+    body: "Power analysis, SRM checks, CUPED-style variance reduction, heterogeneous treatment effects, then difference-in-differences and propensity matching where no experiment was possible.",
+    stat: "DiD and PSM agree within a point on a <b>+8.2pp</b> Medicaid coverage effect; CUPED honestly reported as not helping"
+  },
+  {
+    year: "2026 · STREAMING / FINANCE",
+    title: "MacroQuant",
+    sub: "Cross-asset market intelligence",
+    body: "A streaming pipeline ingesting twelve instruments across five asset classes, resampling to OHLCV on the fly, with a live correlation engine and GARCH + LSTM forecasts.",
+    stat: "Two-lane ingestion with <b>auditable proxy fallback</b> — every substitution tagged, never faked"
+  },
+  {
+    year: "2026 · CAUSAL / UPLIFT",
+    title: "UpliftIQ",
+    sub: "Uplift modeling &amp; retention API",
+    body: "Estimates the treatment effect of a retention contact per customer and routes budget only to persuadables, served through a deployed FastAPI endpoint with a quadrant dashboard.",
+    stat: "Qini <b>+4.29</b> — the only learner to beat random targeting on badly confounded observational data"
+  },
   {
     year: "2026 · RAG / NLP",
     title: "EdgarIQ",
-    sub: "Retrieval-augmented Q&A over SEC 10-Ks",
-    body: "Embeds ~16,000 chunks from 20 companies' 10-K filings into a vector store and answers natural-language questions from retrieved passages only, with a grounding guardrail — fully local and free.",
+    sub: "Retrieval-augmented Q&amp;A over SEC 10-Ks",
+    body: "Embeds ~16,000 chunks from 20 companies’ 10-K filings into a vector store and answers questions from retrieved passages only, with an anti-hallucination grounding guardrail.",
     stat: "Runs entirely on-device: <b>$0 per query</b> (LangChain, ChromaDB, Ollama / Llama 3.2)"
   },
   {
     year: "2026 · HEALTHCARE",
     title: "ClaimsGuard",
     sub: "Explainable fraud-risk prioritization",
-    body: "Tiers healthcare claims into a prioritized auditor worklist and pairs every flag with SHAP attributions in an interactive dashboard — leakage-safe evaluation, test-calibrated thresholds.",
-    stat: "Top-tier fraud precision <b>72% → 80%</b> via SHAP-guided feature pruning of an Isolation Forest"
-  },
-  {
-    year: "2026 · HEALTHCARE",
-    title: "LungGuard",
-    sub: "Lung cancer risk prediction",
-    body: "Predicts risk from 29 patient variables, pairing each prediction with SHAP explanations and a counterfactual \u201CWhat-If\u201D engine, plus calibration and fairness auditing.",
-    stat: "Decision threshold tuned on <b>F2 for screening recall</b> across LogReg / RF / LightGBM"
+    body: "Tiers healthcare claims into a prioritized auditor worklist and pairs every flag with SHAP attributions, with a SHAP-driven experiment testing which features actually carry fraud signal.",
+    stat: "Dropping context features lifted High-tier precision <b>71.7% → 80.0%</b> — measured, not asserted"
   }
 ];
  

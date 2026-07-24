@@ -23,7 +23,5 @@ Plus additional projects — retrieval-augmented Q&A over SEC filings (EdgarIQ),
 HTML · CSS · vanilla JavaScript · deployed on GitHub Pages
 
 ## Contact
-
-- Email: alexbiuckians@gmail.com
 - LinkedIn: https://www.linkedin.com/in/alex-biuckians/
 - GitHub: https://github.com/alexbiuckians

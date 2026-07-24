@@ -1,4 +1,3 @@
-Site readme · MD
 # Alex Biuckians — Data Science Portfolio
  
 The source for my portfolio site, plus a full index of my work. M.S. Data Science candidate at George Washington University (May 2027) building models on real, messy data and holding every one of them to an honest baseline — spatial statistics, forecasting under uncertainty, operations research, and the production monitoring that starts after a model ships.

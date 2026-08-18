@@ -14,10 +14,12 @@ A single-page site built from scratch with plain HTML, CSS and vanilla JavaScrip
  
 - **Approach:** An R pipeline over 21,789 county-cycle observations from real MIT Election Lab returns and U.S. Census data, with PostgreSQL window functions, tidymodels benchmarking, DALEX explainability, and spatial statistics (Moran's I, LISA) on the model's residuals — served through a live Shiny/Leaflet map.
 - **Outcome:** Demographics alone explain 61% of out-of-sample variance (trained 2000–2020, tested on an unseen 2024), and the residuals cluster at Moran's I = 0.391 (p = 2.2e-290), with LISA clusters naming the same-day-registration states — the model recovers the effect of election law without ever being told it exists. It deliberately drops a lag feature that improves accuracy 19.5% because it masks the demographics and destroys the finding. [Live app](https://alexbiuckians.shinyapps.io/turnoutlens/)
+
 **[RouteCast](https://github.com/alexbiuckians/RouteCast)** — Last-mile delivery dispatch intelligence.
  
 - **Approach:** 445,295 real parcel deliveries from Alibaba Cainiao's LaDe dataset, cleaned with a documented audit; three LightGBM quantile models predict P10/P50/P90 delivery time leakage-free by construction, feeding a Hungarian assignment optimizer and a SimPy discrete-event staffing simulation.
 - **Outcome:** Calibrated uncertainty (P90 covers 88.9% against a 90% target), and a decision the model can act on — the optimizer's edge grows with dispatch radius, but staffing the peak hotspot at ~10 couriers cuts average order time 37%, so staffing, not assignment, is the larger operational lever. [Live dashboard](https://alexbiuckians.github.io/RouteCast/dashboard/)
+
 **[DriftWatch](https://github.com/alexbiuckians/DriftWatch)** — Production monitoring for a deployed credit-default model.
  
 - **Approach:** Instruments every prediction through FastAPI middleware, detects data drift with KS/PSI statistics, reconciles late-arriving labels to measure performance decay separately, tracks latency at p50/p95/p99, and fires hysteresis-gated alerts with a written runbook and CI.
